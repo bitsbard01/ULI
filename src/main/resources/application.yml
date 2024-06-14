@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: hackathon
+  jpa:
+    database: MYSQL
+    show-sql: false
+  datasource:
+    url: jdbc:mysql://${dbhost:localhost}:3306/hackathon?createDatabaseIfNotExist=true&useLegacyDatetimeCode=false&useSSL=FALSE
+    username: ${mawani.dbuser:root}
+    password: ${mawani.dbpassword:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+server:
+  servlet:
+    context-path: /hackathon
+  port: 8081

@@ -1,0 +1,11 @@
+goods_type_id,goods_type,goods_description,on_loading_charge_per_kg,off_loading_charge_per_kg
+1,Electronics,"Devices and gadgets such as phones, laptops, etc.",5.50,4.75
+2,Furniture,"Home and office furniture including tables, chairs, etc.",3.00,2.50
+3,Clothing,"Apparel and garments like shirts, trousers, etc.",2.00,1.75
+4,Food,"Perishable and non-perishable food items",1.50,1.25
+5,Books,"Printed and digital books, magazines, etc.",1.00,0.85
+6,Automotive,"Vehicle parts and accessories",4.00,3.50
+7,Toys,"Children's toys and games",1.75,1.50
+8,Pharmaceuticals,"Medicines and medical supplies",6.00,5.50
+9,Cosmetics,"Beauty and personal care products",3.50,3.00
+10,Hardware,"Tools and hardware items",4.25,3.75

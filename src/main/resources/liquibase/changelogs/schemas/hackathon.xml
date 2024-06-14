@@ -1,0 +1,135 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog logicalFilePath="schemas/hackathon.xml"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="bhushanmali (generated)" id="1662982506204-1">
+        <createTable tableName="vehicle">
+            <column autoIncrement="true" name="vehicle_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="vehicle_no" type="VARCHAR(255)"/>
+            <column name="vehicle_type" type="VARCHAR(255)"/>
+            <column name="valid_from" type="datetime"/>
+            <column name="valid_till" type="datetime"/>
+            <column name="owner_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="bhushanmali (generated)" id="1662982506204-2">
+        <createTable tableName="owner">
+            <column autoIncrement="true" name="owner_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="phone_no" type="VARCHAR(255)"/>
+            <column name="bank_account_no" type="VARCHAR(255)"/>
+            <column name="address" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="bhushanmali (generated)" id="1662982506204-3">
+        <createTable tableName="consumer">
+            <column autoIncrement="true" name="consumer_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(200)"/>
+            <column name="phone_no" type="VARCHAR(255)"/>
+            <column name="bank_account_no" type="VARCHAR(255)"/>
+            <column name="address" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="bhushanmali (generated)" id="1662982506204-4">
+        <createTable tableName="stop">
+            <column autoIncrement="true" name="stop_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="stop_name" type="VARCHAR(255)"/>
+            <column name="location_latitude" type="VARCHAR(255)"/>
+            <column name="location_longitude" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="bhushanmali (generated)" id="1662982506204-5">
+        <createTable tableName="route">
+            <column autoIncrement="true" name="route_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="source_stop_id" type="BIGINT"/>
+            <column name="destination_stop_id" type="BIGINT"/>
+            <column name="route_type" type="VARCHAR(255)"/>
+            <column name="distance" type="Double"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="bhushanmali (generated)" id="1662982506204-6">
+        <createTable tableName="orders">
+            <column autoIncrement="true" name="order_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="booking_time" type="datetime"/>
+            <column name="status" type="VARCHAR(255)"/>
+            <column name="payment_status" type="VARCHAR(255)"/>
+            <column name="cost" type="DOUBLE"/>
+            <column name="source_stop_id" type="BIGINT"/>
+            <column name="destination_stop_id" type="BIGINT"/>
+            <column name="consumer_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="bhushanmali (generated)" id="1662982506204-7">
+        <createTable tableName="goods_type">
+            <column autoIncrement="true" name="goods_type_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="goods_type" type="VARCHAR(255)"/>
+            <column name="goods_description" type="VARCHAR(255)"/>
+            <column name="on_loading_charge_per_kg" type="DOUBLE"/>
+            <column name="off_loading_charge_per_kg" type="DOUBLE"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="bhushanmali (generated)" id="1662982506204-8">
+        <createTable tableName="goods">
+            <column autoIncrement="true" name="goods_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="goods_type_id" type="BIGINT"/>
+            <column name="order_id" type="BIGINT"/>
+            <column name="total_volume" type="BIGINT"/>
+            <column name="total_weight" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="bhushanmali (generated)" id="1662982506204-9">
+        <createTable tableName="visit">
+            <column autoIncrement="true" name="visit_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="visit_start_time" type="datetime"/>
+            <column name="visit_end_time" type="datetime"/>
+            <column name="available_volume_capacity" type="BIGINT"/>
+            <column name="available_weight_capacity" type="BIGINT"/>
+            <column name="cost_per_cubic_meter" type="DOUBLE"/>
+            <column name="cost_per_kg" type="DOUBLE"/>
+            <column name="vehicle_id" type="BIGINT"/>
+            <column name="goods_type_id" type="BIGINT"/>
+            <column name="route_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="bhushanmali (generated)" id="1662982506204-10">
+        <createTable tableName="shipment">
+            <column autoIncrement="true" name="shipment_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="visit_id" type="BIGINT"/>
+            <column name="goods_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

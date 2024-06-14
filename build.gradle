@@ -1,0 +1,115 @@
+plugins {
+	id 'org.springframework.boot' version '2.7.16'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'java'
+	id "jacoco"
+	id "com.google.cloud.tools.jib" version "3.2.1"
+	id 'org.liquibase.gradle' version '2.2.0'
+}
+
+group = 'com.uli'
+version = '0.0.1'
+sourceCompatibility = '17'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'mysql:mysql-connector-java:8.0.31'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	liquibaseRuntime 'org.liquibase:liquibase-core:4.14.0'
+	liquibaseRuntime 'mysql:mysql-connector-java:8.0.31'
+	liquibaseRuntime 'info.picocli:picocli:4.7.3'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+// Static properties configuration for Liquibase
+ext.configureProjectProperties = {
+	// Define static properties here
+	project.ext.set('driver', 'com.mysql.cj.jdbc.Driver')
+	project.ext.set('url', 'jdbc:mysql://localhost:3306')
+	project.ext.set('username', 'root')
+	project.ext.set('password', 'root')
+}
+
+// Configure Liquibase
+ext.configureLiquibase = { changeLogFileSuffix ->
+	ext.configureProjectProperties()
+	liquibase {
+		activities {
+			def changeLogFileName = "src/main/resources/liquibase/changelogs/hackathon${changeLogFileSuffix}.xml"
+			"hackathon" {
+				println "Configuring Liquibase for hackathon changeLogFile: ${changeLogFileName}"
+				changelogFile changeLogFileName
+				driver project.ext.driver
+				url "${project.ext.url}/hackathon?useSSL=false&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true"
+				username project.ext.username
+				password project.ext.password
+				logLevel 'debug'
+			}
+		}
+	}
+}
+
+// Create empty schema change set file
+task createEmptySchemaChangeSetFile {
+	doLast {
+		project.ext.createEmptyChangeSet('schemas', project.findProperty('file'))
+	}
+}
+
+// Create empty data change set file
+task createEmptyDataChangeSetFile {
+	doLast {
+		project.ext.createEmptyChangeSet('data', project.findProperty('file'))
+	}
+}
+
+// Function to create empty change set
+ext.createEmptyChangeSet = { changeType, newFileName ->
+	ext.configureProjectProperties()
+	def fileName = newFileName ?: 'new_changeset_file'
+	println "Creating - ${projectDir}/src/main/resources/liquibase/changelogs/${fileName}.xml"
+	def uuid = UUID.randomUUID().toString()
+	new File("${projectDir}/src/main/resources/liquibase/changelogs/${fileName}.xml").text =
+	ant.replace(file: "${projectDir}/src/main/resources/liquibase/changelogs/hackathon_${changeType}_changelog_master.xml", token: "</databaseChangeLog>", value: "<include file=\"${fileName}.xml\" relativeToChangelogFile=\"true\"/>\n</databaseChangeLog>")
+}
+
+// Task to update schemas
+task updateSchemas {
+	doFirst {
+		project.ext.configureLiquibase('_schema_changelog_master')
+	}
+}
+
+// Task to update master data
+task updateMasterData {
+	doFirst {
+		project.ext.configureLiquibase('_master_data')
+	}
+}
+
+// Task to update data
+task updateData {
+	doFirst {
+		project.ext.configureLiquibase('_data_changelog_master')
+	}
+}
+

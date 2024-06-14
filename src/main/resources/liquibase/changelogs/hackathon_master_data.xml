@@ -1,0 +1,17 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog logicalFilePath="cns/generic_master_data.xml"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="f54dde43-6aa5-49b0-8e4a-4f0115c4f1a0" author="bhushanmali" failOnError="true" runOnChange="true" >
+
+        <delete tableName="goods_type" />
+        <loadUpdateData tableName="goods_type" file="data/goods_type.csv"
+                        primaryKey="goods_type_id" relativeToChangelogFile="true">
+            <column name="goods_description" type="VARCHAR(255)"/>
+            <column name="on_loading_charge_per_kg" type="DOUBLE"/>
+            <column name="off_loading_charge_per_kg" type="DOUBLE"/>
+        </loadUpdateData>
+
+    </changeSet>
+</databaseChangeLog>
