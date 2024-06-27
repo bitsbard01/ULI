@@ -44,9 +44,13 @@ public class ConsumerServiceImpl implements ConsumerService {
             return consumer.getOrders();
         }else{
             List<Order> orders = consumer.getOrders();
-            return  orders.stream()
-                    .filter(order -> order.getStatus() != null && order.getStatus().equalsIgnoreCase(status))
-                    .collect(Collectors.toList());
+            if(StringUtils.hasLength(status)){
+                return  orders.stream()
+                        .filter(order -> order.getStatus().equalsIgnoreCase(status))
+                        .collect(Collectors.toList());
+            }else {
+                return orders;
+            }
         }
     }
 }

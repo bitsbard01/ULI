@@ -1,9 +1,13 @@
 package com.uli.hackathon.controller;
 
+import com.uli.hackathon.entity.Order;
+import com.uli.hackathon.entity.Visit;
 import com.uli.hackathon.service.OwnerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,5 +19,10 @@ public class OwnerApiController implements OwnerApi{
     @Override
     public void registerOwner(Long userId) {
         ownerService.registerOwner(userId);
+    }
+
+    @Override
+    public List<Visit> getVisits(Long id, String status) {
+        return ownerService.getVisits(id,status);
     }
 }
