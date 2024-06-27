@@ -1,6 +1,7 @@
 package com.uli.hackathon.service.impl;
 
 import com.uli.hackathon.entity.Consumer;
+import com.uli.hackathon.entity.Order;
 import com.uli.hackathon.entity.User;
 import com.uli.hackathon.repository.ConsumerRepository;
 import com.uli.hackathon.service.ConsumerService;
@@ -8,6 +9,10 @@ import com.uli.hackathon.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -29,5 +34,19 @@ public class ConsumerServiceImpl implements ConsumerService {
     @Override
     public Consumer getConsumer(Long consumerId) {
         return consumerRepository.findById(consumerId).orElse(null);
+    }
+
+    @Override
+    public List<Order> getOrders(Long id, String status) {
+        Consumer consumer = consumerRepository.findById(id).orElse(null);
+        assert consumer != null;
+        if(!StringUtils.hasLength(status)){
+            return consumer.getOrders();
+        }else{
+            List<Order> orders = consumer.getOrders();
+            return  orders.stream()
+                    .filter(order -> order.getStatus() != null && order.getStatus().equalsIgnoreCase(status))
+                    .collect(Collectors.toList());
+        }
     }
 }
