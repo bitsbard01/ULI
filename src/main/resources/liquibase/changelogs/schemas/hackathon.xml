@@ -14,6 +14,7 @@
             <column name="valid_from" type="datetime"/>
             <column name="valid_till" type="datetime"/>
             <column name="owner_id" type="BIGINT"/>
+            <column name="route_id" type="BIGINT"/>
         </createTable>
     </changeSet>
 
@@ -22,11 +23,7 @@
             <column autoIncrement="true" name="owner_id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="name" type="VARCHAR(255)"/>
-            <column name="email" type="VARCHAR(255)"/>
-            <column name="phone_no" type="VARCHAR(255)"/>
-            <column name="bank_account_no" type="VARCHAR(255)"/>
-            <column name="address" type="VARCHAR(255)"/>
+            <column name="user_id" type="BIGINT"/>
         </createTable>
     </changeSet>
 
@@ -35,11 +32,7 @@
             <column autoIncrement="true" name="consumer_id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="name" type="VARCHAR(255)"/>
-            <column name="email" type="VARCHAR(200)"/>
-            <column name="phone_no" type="VARCHAR(255)"/>
-            <column name="bank_account_no" type="VARCHAR(255)"/>
-            <column name="address" type="VARCHAR(255)"/>
+            <column name="user_id" type="BIGINT"/>
         </createTable>
     </changeSet>
 
@@ -116,6 +109,7 @@
             <column name="available_weight_capacity" type="BIGINT"/>
             <column name="cost_per_cubic_meter" type="DOUBLE"/>
             <column name="cost_per_kg" type="DOUBLE"/>
+            <column name="status" type="VARCHAR(255)"/>
             <column name="vehicle_id" type="BIGINT"/>
             <column name="goods_type_id" type="BIGINT"/>
             <column name="route_id" type="BIGINT"/>
@@ -129,6 +123,52 @@
             </column>
             <column name="visit_id" type="BIGINT"/>
             <column name="goods_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="bhushanmali (generated)" id="1662982506204-11">
+        <createTable tableName="user">
+            <column autoIncrement="true" name="user_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="user_name" type="VARCHAR(255)"/>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="first_name" type="VARCHAR(255)"/>
+            <column name="last_name" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="phone_no" type="VARCHAR(255)"/>
+            <column name="bank_account_no" type="VARCHAR(255)"/>
+            <column name="address" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="bhushanmali (generated)" id="1662982506204-11">
+        <createTable tableName="user">
+            <column autoIncrement="true" name="user_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="user_name" type="VARCHAR(255)"/>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="first_name" type="VARCHAR(255)"/>
+            <column name="last_name" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="phone_no" type="VARCHAR(255)"/>
+            <column name="bank_account_no" type="VARCHAR(255)"/>
+            <column name="address" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="bhushanmali (generated)" id="1662982506204-11">
+        <createTable tableName="notification">
+            <column autoIncrement="true" name="notification_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="details" type="VARCHAR(255)"/>
+            <column name="status" type="VARCHAR(255)"/>
+            <column name="timestamp" type="datetime"/>
+            <column name="visit_id" type="BIGINT"/>
+            <column name="order_id" type="BIGINT"/>
         </createTable>
     </changeSet>
 

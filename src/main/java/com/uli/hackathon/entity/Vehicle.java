@@ -34,6 +34,10 @@ public class Vehicle {
     private LocalDateTime validTill;
 
     @ManyToOne
+    @JoinColumn(name = "route_id")
+    private Route mostFrequentRoute;
+
+    @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     private Owner owner;
 }

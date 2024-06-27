@@ -14,10 +14,10 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TripDetailsSo extends LocationSo {
+public class OrderSearchCombinationsRequestSo extends LocationSo {
 
-    private LocalDateTime visitInitiationTime;
-    private LocalDateTime visitTerminationTime;
-    private Long vehicleId;
+    private Long consumerId;
     private List<GoodsTypeDetails> goodsTypeDetailsList;
+    private LocalDateTime desiredStartTime;
+    private LocalDateTime desiredEndTime;
 }

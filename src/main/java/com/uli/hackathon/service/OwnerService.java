@@ -1,11 +1,10 @@
 package com.uli.hackathon.service;
 
 import com.uli.hackathon.entity.Owner;
-import com.uli.hackathon.schemaobjects.PersonalInfoRequestSo;
 
 public interface OwnerService {
 
-    void registerOwner(PersonalInfoRequestSo personalInfoRequestSo);
+    void registerOwner(Long userId);
 
     Owner getOwner(Long ownerId);
 }

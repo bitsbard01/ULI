@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -13,8 +14,11 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderSearchRequestSo extends LocationSo {
-
+public class RequestOrderSo{
     private Long consumerId;
     private List<GoodsTypeDetails> goodsTypeDetailsList;
+    private LocalDateTime startTime = LocalDateTime.now();
+    private LocalDateTime endTime = LocalDateTime.now().plusYears(1);
+    private Long sourceStopId;
+    private Long destinationStopId;
 }

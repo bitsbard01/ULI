@@ -35,6 +35,7 @@ public class Visit {
     private Long availableWeightCapacity;
     private Double costPerCubicMeter;
     private Double costPerKg;
+    private String status;
 
     @ManyToOne
     @JoinColumn(name = "goods_type_id", nullable = false)

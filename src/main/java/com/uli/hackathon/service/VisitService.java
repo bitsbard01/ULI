@@ -1,11 +1,26 @@
 package com.uli.hackathon.service;
 
 import com.uli.hackathon.entity.Visit;
+import com.uli.hackathon.schemaobjects.AcceptRejectVisitSo;
+import com.uli.hackathon.schemaobjects.OrderSearchCombinationsRequestSo;
 import com.uli.hackathon.schemaobjects.TripDetailsSo;
+import com.uli.hackathon.schemaobjects.VisitSequenceDetails;
+
+import java.time.LocalDateTime;
 
 public interface VisitService {
 
-    void addVisit(TripDetailsSo tripDetailsSo);
+    void registerVisit(TripDetailsSo tripDetailsSo);
+
+    Visit addVisit(Visit visit);
 
     Visit getVisit(Long visitId);
+
+    VisitSequenceDetails getAllVisitIdSequences(OrderSearchCombinationsRequestSo request);
+
+    Visit findVisitWithLeastEndTime(Long routeId, LocalDateTime startTime, LocalDateTime endTime);
+
+    Visit findVisitWithHighestStartTime(Long routeId, LocalDateTime startTime, LocalDateTime endTime);
+
+    String acceptRejectVisit(AcceptRejectVisitSo acceptRejectVisitSo);
 }

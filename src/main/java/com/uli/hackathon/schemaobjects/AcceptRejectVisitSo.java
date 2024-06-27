@@ -6,19 +6,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.util.List;
-
 @Getter
 @Setter
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderPlaceRequestSo{
-
-    private Long consumerId;
-    private Double cost;
-    private List<OrderDetailsSo> orderDetailsSoList;
-    private Long sourceStopId;
-    private Long destinationStopId;
-    private Long orderId;
+public class AcceptRejectVisitSo {
+    private Long visitId;
+    private String status;
+    private Long volumeCapacity;
+    private Long weightCapacity;
+    private Double chargePerCubicMeter;
+    private Double chargePerKg;
 }

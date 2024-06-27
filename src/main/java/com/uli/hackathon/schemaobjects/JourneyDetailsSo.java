@@ -1,24 +1,23 @@
 package com.uli.hackathon.schemaobjects;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class VehicleDetailsSo {
-
-    private String vehicleNumber;
+public class JourneyDetailsSo extends LocationSo{
+    private Long visitId;
+    private LocalDateTime visitInitiationTime;
+    private LocalDateTime visitTerminationTime;
+    private Long vehicleId;
     private String vehicleCategory;
-    private LocalDateTime validityStart;
-    private LocalDateTime validityEnd;
-    private Long ownerId;
-    private LocationSo locationSo;
+    private Double cost;
 }

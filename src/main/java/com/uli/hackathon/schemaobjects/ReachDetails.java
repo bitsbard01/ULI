@@ -7,17 +7,14 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TripDetailsSo extends LocationSo {
+public class ReachDetails {
 
-    private LocalDateTime visitInitiationTime;
-    private LocalDateTime visitTerminationTime;
-    private Long vehicleId;
-    private List<GoodsTypeDetails> goodsTypeDetailsList;
+    private Long stopId;
+    private LocalDateTime reachedTime;
 }

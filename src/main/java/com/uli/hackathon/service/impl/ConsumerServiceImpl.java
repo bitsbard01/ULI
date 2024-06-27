@@ -1,9 +1,10 @@
 package com.uli.hackathon.service.impl;
 
 import com.uli.hackathon.entity.Consumer;
+import com.uli.hackathon.entity.User;
 import com.uli.hackathon.repository.ConsumerRepository;
-import com.uli.hackathon.schemaobjects.PersonalInfoRequestSo;
 import com.uli.hackathon.service.ConsumerService;
+import com.uli.hackathon.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,13 +15,15 @@ import org.springframework.stereotype.Service;
 public class ConsumerServiceImpl implements ConsumerService {
 
     private final ConsumerRepository consumerRepository;
+
+    private final UserService userService;
     @Override
-    public void registerConsumer(PersonalInfoRequestSo personalInfoRequestSo) {
-        Consumer consumer = Consumer.builder().name(personalInfoRequestSo.getUserName())
-                .email(personalInfoRequestSo.getUserEmail()).address(personalInfoRequestSo.getUserAddress())
-                .bankAccountNo(personalInfoRequestSo.getUserBankAccountNo())
-                .phoneNo(personalInfoRequestSo.getUserPhoneNo()).build();
-        consumerRepository.save(consumer);
+    public void registerConsumer(Long userId) {
+        User user = userService.getUser(userId);
+        if(user != null){
+            Consumer consumer = Consumer.builder().user(user).build();
+            consumerRepository.save(consumer);
+        }
     }
 
     @Override
