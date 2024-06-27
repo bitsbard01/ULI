@@ -1,6 +1,5 @@
 package com.uli.hackathon.controller;
 
-import com.uli.hackathon.entity.Order;
 import com.uli.hackathon.entity.Visit;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

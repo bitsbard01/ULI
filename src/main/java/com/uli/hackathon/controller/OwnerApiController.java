@@ -1,6 +1,5 @@
 package com.uli.hackathon.controller;
 
-import com.uli.hackathon.entity.Order;
 import com.uli.hackathon.entity.Visit;
 import com.uli.hackathon.service.OwnerService;
 import lombok.RequiredArgsConstructor;
