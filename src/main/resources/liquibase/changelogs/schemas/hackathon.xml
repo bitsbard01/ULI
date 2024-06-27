@@ -158,7 +158,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet author="bhushanmali (generated)" id="1662982506204-11">
+    <changeSet author="bhushanmali (generated)" id="1662982506204-12">
         <createTable tableName="notification">
             <column autoIncrement="true" name="notification_id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
@@ -167,8 +167,6 @@
             <column name="details" type="VARCHAR(255)"/>
             <column name="status" type="VARCHAR(255)"/>
             <column name="timestamp" type="datetime"/>
-            <column name="visit_id" type="BIGINT"/>
-            <column name="order_id" type="BIGINT"/>
         </createTable>
     </changeSet>
 

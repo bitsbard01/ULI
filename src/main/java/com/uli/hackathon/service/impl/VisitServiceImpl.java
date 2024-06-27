@@ -196,7 +196,7 @@ public class VisitServiceImpl implements VisitService {
         String orderDetails = "Requested order accepted : order id " + order.getOrderId() + " ordered from " +
                 order.getSourceStop().getStopName() + " ordered to " + order.getDestinationStop().getStopName() + " booked at " +
                 order.getBookingTime().toString();
-        Notification notification = Notification.builder().order(order).type(ORDER_REQUEST).details(orderDetails)
+        Notification notification = Notification.builder().type(ORDER_REQUEST).details(orderDetails)
                 .timestamp(LocalDateTime.now()).user(user).build();
         notificationService.addNotification(notification);
     }

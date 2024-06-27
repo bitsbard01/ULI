@@ -331,7 +331,7 @@ public class OrderServiceImpl implements OrderService {
                 + " with minimum volume capacity required " + visit.getAvailableVolumeCapacity() +
                 " and minimum weight capacity required " + visit.getAvailableWeightCapacity();
         Notification notification = Notification.builder().user(user).type(VISIT_REQUEST).details(visitDetails)
-                .status(REQUESTED).visit(visit).timestamp(LocalDateTime.now()).build();
+                .status(REQUESTED).timestamp(LocalDateTime.now()).build();
         notificationService.addNotification(notification);
     }
 }
