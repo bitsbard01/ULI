@@ -23,6 +23,7 @@ import com.uli.hackathon.service.VehicleService;
 import com.uli.hackathon.service.VisitService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -55,8 +56,8 @@ public class VisitServiceImpl implements VisitService {
     public void registerVisit(TripDetailsSo tripDetailsSo) {
         Stop sourceStop = stopService.getOrAddStop(tripDetailsSo.getSourceLatitude(),tripDetailsSo.getSourceLongitude()
                 ,tripDetailsSo.getSourceName());
-        Stop destinationStop = stopService.getOrAddStop(tripDetailsSo.getSourceLatitude(),tripDetailsSo.getSourceLongitude()
-                ,tripDetailsSo.getSourceName());
+        Stop destinationStop = stopService.getOrAddStop(tripDetailsSo.getDestinationLatitude(),tripDetailsSo.getDestinationLongitude()
+                ,tripDetailsSo.getDestinationName());
 
         Vehicle vehicle = vehicleService.getVehicle(tripDetailsSo.getVehicleId());
         if(vehicle == null){
@@ -113,7 +114,7 @@ public class VisitServiceImpl implements VisitService {
 
             List<Long> currentPath = new ArrayList<>();
             List<List<Long>> possiblePaths = new ArrayList<>();
-            findPaths(sourceStop.getStopId(), destinationStop.getStopId(), currentPath, possiblePaths, visitMap);
+            findPaths(sourceStop.getStopId(), destinationStop.getStopId(), currentPath, possiblePaths, visitMap,LocalDateTime.MIN);
 
             if (possiblePaths.isEmpty()) {
                 resultMap.put(goodsType.getGoodsType(), null);
@@ -126,13 +127,15 @@ public class VisitServiceImpl implements VisitService {
     }
 
     @Override
-    public Visit findVisitWithLeastEndTime(Long routeId, LocalDateTime startTime, LocalDateTime endTime) {
-        return visitRepository.findFirstByRouteAndVisitStartTimeAfterAndVisitEndTimeBefore(routeId,startTime,endTime).orElse(null);
+    public Visit findVisitWithLeastEndTime(Long routeId,Long goodsTypeId, LocalDateTime startTime, LocalDateTime endTime) {
+        List<Visit> visits = visitRepository.findFirstByRouteAndVisitStartTimeAfterAndVisitEndTimeBefore(routeId,goodsTypeId,startTime,endTime, PageRequest.of(0, 1));
+        return visits.isEmpty() ? null : visits.get(0);
     }
 
     @Override
-    public Visit findVisitWithHighestStartTime(Long routeId, LocalDateTime startTime, LocalDateTime endTime) {
-        return visitRepository.findFirstByRouteAndVisitStartTimeAfterAndVisitEndTimeBeforeOrderByVisitStartTimeDesc(routeId,startTime,endTime).orElse(null);
+    public Visit findVisitWithHighestStartTime(Long routeId,Long goodsTypeId, LocalDateTime startTime, LocalDateTime endTime) {
+        List<Visit> visits = visitRepository.findFirstByRouteAndVisitStartTimeAfterAndVisitEndTimeBeforeOrderByVisitStartTimeDesc(routeId,goodsTypeId,startTime,endTime,PageRequest.of(0, 1));
+        return visits.isEmpty() ? null : visits.get(0);
     }
 
     @Override
@@ -165,10 +168,11 @@ public class VisitServiceImpl implements VisitService {
                     Order order = goods.getOrder();
                     Stop source = order.getSourceStop();
                     Stop destination = order.getDestinationStop();
-                    OrderSearchCombinationsRequestSo requestSo = OrderSearchCombinationsRequestSo.builder()
-                            .sourceName(source.getStopName()).destinationName(destination.getStopName())
-                            .desiredStartTime(LocalDateTime.MIN).desiredEndTime(LocalDateTime.MAX)
-                            .goodsTypeDetailsList(Collections.singletonList(goodsTypeDetails)).build();
+                    OrderSearchCombinationsRequestSo requestSo = OrderSearchCombinationsRequestSo.builder().sourceLatitude(source.getLocationLatitude())
+                            .sourceLongitude(source.getLocationLongitude()).sourceName(source.getStopName())
+                            .destinationLatitude(destination.getLocationLatitude()).destinationLongitude(destination.getLocationLongitude())
+                            .destinationName(destination.getStopName()).desiredStartTime(LocalDateTime.now().minusYears(3))
+                            .desiredEndTime(LocalDateTime.now().plusYears(3)).goodsTypeDetailsList(Collections.singletonList(goodsTypeDetails)).build();
                     VisitSequenceDetails visitSequenceDetails = getAllVisitIdSequences(requestSo);
                     Map<String, List<List<Long>>> resultMap = visitSequenceDetails.getVisitIdSequences();
                     if(resultMap.get(goods.getGoodsType().getGoodsType()) != null){
@@ -202,7 +206,7 @@ public class VisitServiceImpl implements VisitService {
     }
 
     private void findPaths(Long currentStopId, Long destinationStopId, List<Long> currentPath, List<List<Long>> possiblePaths,
-                           Map<Long, List<Visit>> visitMap) {
+                           Map<Long, List<Visit>> visitMap, LocalDateTime lastVisitEndTime) {
 
         if (currentStopId.equals(destinationStopId)) {
             possiblePaths.add(new ArrayList<>(currentPath));
@@ -214,9 +218,11 @@ public class VisitServiceImpl implements VisitService {
         }
 
         for (Visit visit : visitMap.get(currentStopId)) {
-            currentPath.add(visit.getVisitId());
-            findPaths(visit.getRoute().getDestinationStop().getStopId(), destinationStopId, currentPath, possiblePaths, visitMap);
-            currentPath.remove(currentPath.size() - 1);
+            if (lastVisitEndTime == null || visit.getVisitStartTime().isAfter(lastVisitEndTime)) {
+                currentPath.add(visit.getVisitId());
+                findPaths(visit.getRoute().getDestinationStop().getStopId(), destinationStopId, currentPath, possiblePaths, visitMap, visit.getVisitEndTime());
+                currentPath.remove(currentPath.size() - 1);
+            }
         }
     }
 }

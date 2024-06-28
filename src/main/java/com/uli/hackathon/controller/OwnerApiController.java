@@ -19,9 +19,4 @@ public class OwnerApiController implements OwnerApi{
     public void registerOwner(Long userId) {
         ownerService.registerOwner(userId);
     }
-
-    @Override
-    public List<Visit> getVisits(Long id, String status) {
-        return ownerService.getVisits(id,status);
-    }
 }

@@ -23,7 +23,7 @@ public class StopRepositoryImpl implements StopCustomRepository {
     private final EntityManager entityManager;
 
     @Override
-    public Stop getStop(String locationLatitude, String locationLongitude) {
+    public Stop getStop(Double  locationLatitude, Double  locationLongitude) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Stop> cq = cb.createQuery(Stop.class);
         Root<Stop> root = cq.from(Stop.class);

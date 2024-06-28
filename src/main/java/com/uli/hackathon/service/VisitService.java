@@ -18,9 +18,9 @@ public interface VisitService {
 
     VisitSequenceDetails getAllVisitIdSequences(OrderSearchCombinationsRequestSo request);
 
-    Visit findVisitWithLeastEndTime(Long routeId, LocalDateTime startTime, LocalDateTime endTime);
+    Visit findVisitWithLeastEndTime(Long routeId, Long goodsTypeId, LocalDateTime startTime, LocalDateTime endTime);
 
-    Visit findVisitWithHighestStartTime(Long routeId, LocalDateTime startTime, LocalDateTime endTime);
+    Visit findVisitWithHighestStartTime(Long routeId, Long goodsTypeId, LocalDateTime startTime, LocalDateTime endTime);
 
     String acceptRejectVisit(AcceptRejectVisitSo acceptRejectVisitSo);
 }

@@ -134,7 +134,9 @@ public class OrderServiceImpl implements OrderService {
 
             if (visitIdSequences == null) {
                 goodsTypeJourneyListMap.put(goodsType, null);
-                orderAvailabilityStatus = PARTIALLY_AVAILABLE;
+                if(orderAvailabilityStatus.equals(AVAILABLE)){
+                    orderAvailabilityStatus = PARTIALLY_AVAILABLE;
+                }
                 continue;
             }
 
@@ -223,36 +225,37 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void notifyVehicles(RequestOrderSo request, GoodsTypeDetails goodsTypeDetails,Goods goods){
-        List<Visit> potentialVisits = getPotentialVisits(request);
+        List<Visit> potentialVisits = getPotentialVisits(request,goods);
         potentialVisits.forEach(visit -> {
             List<Vehicle> vehicles =vehicleService.findVehiclesByRoute(visit.getRoute());
             vehicles.forEach(vehicle -> {
                 Visit newVisit = Visit.builder().build();
                 BeanUtils.copyProperties(visit,newVisit);
+                Route route = routeService.getOrAddRoute(visit.getRoute().getSourceStop(),visit.getRoute().getDestinationStop(),vehicle.getVehicleType());
                 newVisit.setGoodsType(goods.getGoodsType());
                 newVisit.setAvailableVolumeCapacity(goodsTypeDetails.getVolumeCapacity());
                 newVisit.setAvailableWeightCapacity(goodsTypeDetails.getWeightCapacity());
                 newVisit.setVehicle(vehicle);
                 newVisit.setStatus(REQUESTED);
+                newVisit.setRoute(route);
                 newVisit = visitService.addVisit(newVisit);
                 sendNotification(newVisit);
-                Shipment shipment = Shipment.builder().visit(visit).goods(goods).build();
+                Shipment shipment = Shipment.builder().visit(newVisit).goods(goods).build();
                 shipmentService.addShipment(shipment);
             });
         });
     }
 
-    private List<Visit> getPotentialVisits(RequestOrderSo request) {
+    private List<Visit> getPotentialVisits(RequestOrderSo request,Goods goods) {
         Stop sourceStop = stopService.getStop(request.getSourceStopId());
         Stop destinationStop = stopService.getStop(request.getDestinationStopId());
-
-        Set<ReachDetails> reachableFromSource = findReachableStopsFromSource(sourceStop.getStopId(),request.getStartTime(),request.getEndTime());
-        Set<ReachDetails> reachableToDestination = findReachableStopsToDestination(destinationStop.getStopId(),request.getStartTime(),request.getEndTime());
+        Set<ReachDetails> reachableFromSource = findReachableStopsFromSource(sourceStop.getStopId(),request.getStartTime(),request.getEndTime(),goods.getGoodsType().getGoodsTypeId());
+        Set<ReachDetails> reachableToDestination = findReachableStopsToDestination(destinationStop.getStopId(),request.getStartTime(),request.getEndTime(),goods.getGoodsType().getGoodsTypeId());
 
         List<Visit> allVisits = new ArrayList<>();
         for (ReachDetails from : reachableFromSource) {
             for (ReachDetails to : reachableToDestination) {
-                if (!from.equals(to)) {
+                if (!from.equals(to) && to.getReachedTime().isAfter(from.getReachedTime())) {
                     double distance = commonHelper.calculateDistance(
                             stopService.getStop(from.getStopId()).getLocationLatitude(), stopService.getStop(from.getStopId()).getLocationLongitude(),
                             stopService.getStop(to.getStopId()).getLocationLatitude(), stopService.getStop(to.getStopId()).getLocationLongitude()
@@ -274,50 +277,50 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toList());
     }
 
-    private Set<ReachDetails> findReachableStopsFromSource(Long sourceStopId,LocalDateTime startTime, LocalDateTime endTime) {
+    private Set<ReachDetails> findReachableStopsFromSource(Long sourceStopId,LocalDateTime startTime, LocalDateTime endTime, Long goodsTypeId) {
         Set<ReachDetails> reachableStops = new HashSet<>();
         Set<Long> visited = new HashSet<>();
-        dfsFromSource(sourceStopId, visited, reachableStops,startTime,endTime);
+        dfsFromSource(sourceStopId, visited, reachableStops,startTime,endTime,goodsTypeId);
         return reachableStops;
     }
 
-    private void dfsFromSource(Long currentStopId, Set<Long> visited, Set<ReachDetails> reachableStops,LocalDateTime startTime, LocalDateTime endTime) {
+    private void dfsFromSource(Long currentStopId, Set<Long> visited, Set<ReachDetails> reachableStops,LocalDateTime startTime, LocalDateTime endTime,Long goodsTypeId) {
         visited.add(currentStopId);
-        reachableStops.add(ReachDetails.builder().stopId(currentStopId).reachedTime(endTime).build());
+        reachableStops.add(ReachDetails.builder().stopId(currentStopId).reachedTime(startTime).build());
 
         List<Route> routes = routeService.getRouteBySourceId(currentStopId);
         for (Route route : routes) {
-            Visit visit = visitService.findVisitWithLeastEndTime(route.getRouteId(),startTime,endTime);
+            Visit visit = visitService.findVisitWithLeastEndTime(route.getRouteId(),goodsTypeId,startTime,endTime);
             if(visit == null){
                 continue;
             }
             Long nextStopId = route.getDestinationStop().getStopId();
             if (!visited.contains(nextStopId)) {
-                dfsFromSource(nextStopId, visited, reachableStops,visit.getVisitEndTime(),endTime);
+                dfsFromSource(nextStopId, visited, reachableStops,visit.getVisitEndTime(),endTime,goodsTypeId);
             }
         }
     }
 
-    private Set<ReachDetails> findReachableStopsToDestination(Long destinationStopId,LocalDateTime startTime, LocalDateTime endTime) {
+    private Set<ReachDetails> findReachableStopsToDestination(Long destinationStopId,LocalDateTime startTime, LocalDateTime endTime,Long goodsTypeId) {
         Set<ReachDetails> reachableStops = new HashSet<>();
         Set<Long> visited = new HashSet<>();
-        dfsToDestination(destinationStopId, visited, reachableStops,startTime,endTime);
+        dfsToDestination(destinationStopId, visited, reachableStops,startTime,endTime,goodsTypeId);
         return reachableStops;
     }
 
-    private void dfsToDestination(Long currentStopId, Set<Long> visited, Set<ReachDetails> reachableStops,LocalDateTime startTime, LocalDateTime endTime) {
+    private void dfsToDestination(Long currentStopId, Set<Long> visited, Set<ReachDetails> reachableStops,LocalDateTime startTime, LocalDateTime endTime,Long goodsTypeId) {
         visited.add(currentStopId);
         reachableStops.add(ReachDetails.builder().stopId(currentStopId).reachedTime(endTime).build());
 
         List<Route> routes = routeService.getRouteByDestinationId(currentStopId);
         for (Route route : routes) {
-            Visit visit = visitService.findVisitWithHighestStartTime(route.getRouteId(),startTime,endTime);
+            Visit visit = visitService.findVisitWithHighestStartTime(route.getRouteId(),goodsTypeId,startTime,endTime);
             if(visit == null){
                 continue;
             }
             Long previousStopId = route.getSourceStop().getStopId();
             if (!visited.contains(previousStopId)) {
-                dfsToDestination(previousStopId, visited, reachableStops,startTime,visit.getVisitStartTime());
+                dfsToDestination(previousStopId, visited, reachableStops,startTime,visit.getVisitStartTime(),goodsTypeId);
             }
         }
     }

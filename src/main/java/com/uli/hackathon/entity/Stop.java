@@ -27,6 +27,6 @@ public class Stop {
     private Long stopId;
 
     private String stopName;
-    private String locationLatitude;
-    private String locationLongitude;
+    private Double locationLatitude;
+    private Double locationLongitude;
 }

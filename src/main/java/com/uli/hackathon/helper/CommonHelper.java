@@ -11,11 +11,7 @@ import static com.uli.hackathon.utils.Constants.EARTH_RADIUS;
 @RequiredArgsConstructor
 public class CommonHelper {
 
-    public double calculateDistance(String startLatStr, String startLongStr, String endLatStr, String endLongStr) {
-        double startLat = Double.parseDouble(startLatStr);
-        double startLong = Double.parseDouble(startLongStr);
-        double endLat = Double.parseDouble(endLatStr);
-        double endLong = Double.parseDouble(endLongStr);
+    public double calculateDistance(Double  startLat, Double  startLong, Double endLat, Double  endLong) {
 
         double dLat  = Math.toRadians((endLat - startLat));
         double dLong = Math.toRadians((endLong - startLong));

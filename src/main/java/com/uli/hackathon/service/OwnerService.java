@@ -10,6 +10,4 @@ public interface OwnerService {
     void registerOwner(Long userId);
 
     Owner getOwner(Long ownerId);
-
-    List<Visit> getVisits(Long id, String status);
 }

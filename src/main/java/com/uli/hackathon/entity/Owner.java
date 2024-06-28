@@ -34,7 +34,4 @@ public class Owner{
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "owner")
-    private List<Vehicle> vehicles;
-
 }

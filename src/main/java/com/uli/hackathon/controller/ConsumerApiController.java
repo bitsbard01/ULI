@@ -18,9 +18,4 @@ public class ConsumerApiController implements ConsumerApi{
     public void registerConsumer(Long userId) {
         consumerService.registerConsumer(userId);
     }
-
-    @Override
-    public List<Order> getOrders(Long id, String status) {
-        return consumerService.getOrders(id,status);
-    }
 }

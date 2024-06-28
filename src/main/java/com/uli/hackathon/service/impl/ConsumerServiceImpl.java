@@ -35,22 +35,4 @@ public class ConsumerServiceImpl implements ConsumerService {
     public Consumer getConsumer(Long consumerId) {
         return consumerRepository.findById(consumerId).orElse(null);
     }
-
-    @Override
-    public List<Order> getOrders(Long id, String status) {
-        Consumer consumer = consumerRepository.findById(id).orElse(null);
-        assert consumer != null;
-        if(!StringUtils.hasLength(status)){
-            return consumer.getOrders();
-        }else{
-            List<Order> orders = consumer.getOrders();
-            if(StringUtils.hasLength(status)){
-                return  orders.stream()
-                        .filter(order -> order.getStatus().equalsIgnoreCase(status))
-                        .collect(Collectors.toList());
-            }else {
-                return orders;
-            }
-        }
-    }
 }

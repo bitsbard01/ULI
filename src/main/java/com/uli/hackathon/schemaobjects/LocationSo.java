@@ -12,10 +12,10 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LocationSo {
-    private String sourceLatitude;
-    private String sourceLongitude;
+    private Double sourceLatitude;
+    private Double sourceLongitude;
     private String sourceName;
-    private String destinationLatitude;
-    private String destinationLongitude;
+    private Double destinationLatitude;
+    private Double destinationLongitude;
     private String destinationName;
 }

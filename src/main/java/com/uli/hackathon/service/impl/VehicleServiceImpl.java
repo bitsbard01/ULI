@@ -59,10 +59,10 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     public List<Vehicle> findVehiclesByRoute(Route route) {
-        double sourceLat = Double.parseDouble(route.getSourceStop().getLocationLatitude());
-        double sourceLng = Double.parseDouble(route.getSourceStop().getLocationLongitude());
-        double destLat = Double.parseDouble(route.getDestinationStop().getLocationLatitude());
-        double destLng = Double.parseDouble(route.getDestinationStop().getLocationLongitude());
+        double sourceLat = route.getSourceStop().getLocationLatitude();
+        double sourceLng = route.getSourceStop().getLocationLongitude();
+        double destLat = route.getDestinationStop().getLocationLatitude();
+        double destLng = route.getDestinationStop().getLocationLongitude();
 
         List<Vehicle> vehicles = vehicleRepository.findVehiclesByRouteProximity(sourceLat, sourceLng, destLat, destLng
                 , THRESHOLD_DISTANCE);

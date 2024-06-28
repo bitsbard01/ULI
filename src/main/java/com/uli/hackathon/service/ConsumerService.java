@@ -10,6 +10,4 @@ public interface ConsumerService {
     void registerConsumer(Long userId);
 
     Consumer getConsumer(Long consumerId);
-
-    List<Order> getOrders(Long id,String status);
 }

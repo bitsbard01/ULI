@@ -4,5 +4,5 @@ import com.uli.hackathon.entity.Stop;
 
 public interface StopCustomRepository {
 
-    Stop getStop(String locationLatitude, String locationLongitude);
+    Stop getStop(Double locationLatitude, Double  locationLongitude);
 }

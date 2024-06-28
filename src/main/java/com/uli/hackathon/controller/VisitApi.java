@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/visit")
 public interface VisitApi {
 
-    @PostMapping(value = "/add")
+    @PostMapping(value = "/register")
     void registerVisit(@RequestBody TripDetailsSo tripDetailsSo);
 
-    @PostMapping(value = "/accept")
+    @PostMapping(value = "/accept-reject")
     ResponseEntity<String> acceptVisit(@RequestBody AcceptRejectVisitSo acceptRejectVisitSo);
 
 }

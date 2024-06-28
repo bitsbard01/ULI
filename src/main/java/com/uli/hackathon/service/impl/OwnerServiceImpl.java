@@ -36,22 +36,4 @@ public class OwnerServiceImpl implements OwnerService {
     public Owner getOwner(Long ownerId) {
         return ownerRepository.findById(ownerId).orElse(null);
     }
-
-    @Override
-    public List<Visit> getVisits(Long id, String status) {
-        Owner owner = ownerRepository.findById(id).orElse(null);
-        assert owner != null;
-        List<Vehicle> vehicles = owner.getVehicles();
-        List<Visit> visits = new ArrayList<>();
-        vehicles.forEach(vehicle -> {
-            visits.addAll(vehicle.getVisits());
-        });
-        if(StringUtils.hasLength(status)){
-            return visits.stream()
-                    .filter(visit -> visit.getStatus().equalsIgnoreCase(status))
-                    .collect(Collectors.toList());
-        }else{
-            return visits;
-        }
-    }
 }

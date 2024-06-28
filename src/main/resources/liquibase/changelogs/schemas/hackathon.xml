@@ -42,8 +42,8 @@
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="stop_name" type="VARCHAR(255)"/>
-            <column name="location_latitude" type="VARCHAR(255)"/>
-            <column name="location_longitude" type="VARCHAR(255)"/>
+            <column name="location_latitude" type="Double"/>
+            <column name="location_longitude" type="Double"/>
         </createTable>
     </changeSet>
 
