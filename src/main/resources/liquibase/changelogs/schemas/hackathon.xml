@@ -167,6 +167,7 @@
             <column name="details" type="VARCHAR(255)"/>
             <column name="status" type="VARCHAR(255)"/>
             <column name="timestamp" type="datetime"/>
+            <column name="user_id" type="BIGINT"/>
         </createTable>
     </changeSet>
 

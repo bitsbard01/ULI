@@ -43,6 +43,6 @@ public class Vehicle {
     @JoinColumn(name = "owner_id", nullable = false)
     private Owner owner;
 
-    @OneToMany(mappedBy = "visit")
+    @OneToMany(mappedBy = "vehicle")
     private List<Visit> visits;
 }
