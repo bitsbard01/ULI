@@ -1,5 +1,6 @@
 package com.uli.hackathon.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,5 +50,6 @@ public class Visit {
 
     @ManyToOne
     @JoinColumn(name = "vehicle_id", nullable = false)
+    @JsonIgnore
     private Vehicle vehicle;
 }

@@ -1,5 +1,6 @@
 package com.uli.hackathon.controller;
 
+import com.uli.hackathon.entity.Order;
 import com.uli.hackathon.schemaobjects.OrderPlaceRequestSo;
 import com.uli.hackathon.schemaobjects.OrderSearchCombinationsRequestSo;
 import com.uli.hackathon.schemaobjects.OrderSearchCombinationsResponseSo;
@@ -8,6 +9,8 @@ import com.uli.hackathon.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 
 @RestController
@@ -36,5 +39,10 @@ public class OrderApiController implements OrderApi{
     @Override
     public Double getCost(Long id) {
         return orderService.getCost(id);
+    }
+
+    @Override
+    public List<Order> getOrders(Long consumerId, String status) {
+        return orderService.getOrdersByConsumerAndStatus(consumerId,status);
     }
 }

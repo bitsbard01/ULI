@@ -1,5 +1,6 @@
 package com.uli.hackathon.repository;
 
+import com.uli.hackathon.entity.Owner;
 import com.uli.hackathon.entity.Vehicle;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,4 +32,6 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
                                       @Param("destLat") double destLat,
                                       @Param("destLng") double destLng,
                                       Pageable pageable);
+
+    List<Vehicle> findByOwner(Owner owner);
 }

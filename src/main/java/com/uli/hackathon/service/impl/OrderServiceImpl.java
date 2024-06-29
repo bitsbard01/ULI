@@ -216,6 +216,13 @@ public class OrderServiceImpl implements OrderService {
                 .sum();
     }
 
+    public List<Order> getOrdersByConsumerAndStatus(Long consumerId, String status) {
+        if (status != null && !status.isEmpty()) {
+            return orderRepository.findByConsumerConsumerIdAndStatus(consumerId, status);
+        } else {
+            return orderRepository.findByConsumerConsumerId(consumerId);
+        }
+    }
     private double calculateCost(Visit visit, GoodsTypeDetails goodsTypeDetails, GoodsType goodsType) {
         double volumeCost = visit.getCostPerCubicMeter() * goodsTypeDetails.getVolumeCapacity();
         double weightCost = visit.getCostPerKg() * goodsTypeDetails.getWeightCapacity();

@@ -4,6 +4,7 @@ import com.uli.hackathon.entity.Goods;
 import com.uli.hackathon.entity.GoodsType;
 import com.uli.hackathon.entity.Notification;
 import com.uli.hackathon.entity.Order;
+import com.uli.hackathon.entity.Owner;
 import com.uli.hackathon.entity.Route;
 import com.uli.hackathon.entity.Shipment;
 import com.uli.hackathon.entity.Stop;
@@ -18,6 +19,7 @@ import com.uli.hackathon.schemaobjects.TripDetailsSo;
 import com.uli.hackathon.schemaobjects.VisitSequenceDetails;
 import com.uli.hackathon.service.GoodsTypeService;
 import com.uli.hackathon.service.NotificationService;
+import com.uli.hackathon.service.OwnerService;
 import com.uli.hackathon.service.ShipmentService;
 import com.uli.hackathon.service.VehicleService;
 import com.uli.hackathon.service.VisitService;
@@ -51,6 +53,7 @@ public class VisitServiceImpl implements VisitService {
     private final ShipmentService shipmentService;
     private final VehicleService vehicleService;
 
+    private final OwnerService ownerService;
     private final NotificationService notificationService;
     @Override
     public void registerVisit(TripDetailsSo tripDetailsSo) {
@@ -195,6 +198,15 @@ public class VisitServiceImpl implements VisitService {
         return null;
     }
 
+    public List<Visit> getVisitsByOwnerAndStatus(Long ownerId, String status) {
+        Owner owner = ownerService.getOwner(ownerId);
+        List<Vehicle> vehicles = vehicleService.getVehiclesByOwner(owner);
+        if (status != null && !status.isEmpty()) {
+            return visitRepository.findByVehicleInAndStatus(vehicles, status);
+        } else {
+            return visitRepository.findByVehicleIn(vehicles);
+        }
+    }
     private void sendNotification(Order order){
         User user = order.getConsumer().getUser();
         String orderDetails = "Requested order accepted : order id " + order.getOrderId() + " ordered from " +

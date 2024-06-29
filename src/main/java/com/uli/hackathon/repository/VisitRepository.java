@@ -1,6 +1,7 @@
 package com.uli.hackathon.repository;
 
 import com.uli.hackathon.entity.GoodsType;
+import com.uli.hackathon.entity.Vehicle;
 import com.uli.hackathon.entity.Visit;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -46,4 +47,7 @@ public interface VisitRepository extends JpaRepository<Visit, Long> {
             @Param("startTime") LocalDateTime startTime,
             @Param("endTime") LocalDateTime endTime,
             Pageable pageable);
+
+    List<Visit> findByVehicleInAndStatus(List<Vehicle> vehicles, String status);
+    List<Visit> findByVehicleIn(List<Vehicle> vehicles);
 }

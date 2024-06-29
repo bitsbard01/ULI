@@ -1,5 +1,6 @@
 package com.uli.hackathon.service;
 
+import com.uli.hackathon.entity.Owner;
 import com.uli.hackathon.entity.Visit;
 import com.uli.hackathon.schemaobjects.AcceptRejectVisitSo;
 import com.uli.hackathon.schemaobjects.OrderSearchCombinationsRequestSo;
@@ -7,6 +8,7 @@ import com.uli.hackathon.schemaobjects.TripDetailsSo;
 import com.uli.hackathon.schemaobjects.VisitSequenceDetails;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface VisitService {
 
@@ -23,4 +25,6 @@ public interface VisitService {
     Visit findVisitWithHighestStartTime(Long routeId, Long goodsTypeId, LocalDateTime startTime, LocalDateTime endTime);
 
     String acceptRejectVisit(AcceptRejectVisitSo acceptRejectVisitSo);
+
+    List<Visit> getVisitsByOwnerAndStatus(Long ownerId, String status);
 }

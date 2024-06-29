@@ -74,4 +74,8 @@ public class VehicleServiceImpl implements VehicleService {
 
         return vehicles;
     }
+
+    public List<Vehicle> getVehiclesByOwner(Owner owner) {
+        return vehicleRepository.findByOwner(owner);
+    }
 }

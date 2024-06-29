@@ -1,5 +1,6 @@
 package com.uli.hackathon.service;
 
+import com.uli.hackathon.entity.Owner;
 import com.uli.hackathon.entity.Route;
 import com.uli.hackathon.entity.Vehicle;
 import com.uli.hackathon.schemaobjects.VehicleDetailsSo;
@@ -13,4 +14,6 @@ public interface VehicleService {
     Vehicle getVehicle(Long vehicleId);
 
     List<Vehicle> findVehiclesByRoute(Route route);
+
+    List<Vehicle> getVehiclesByOwner(Owner owner);
 }

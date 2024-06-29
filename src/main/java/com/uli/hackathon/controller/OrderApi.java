@@ -1,5 +1,6 @@
 package com.uli.hackathon.controller;
 
+import com.uli.hackathon.entity.Order;
 import com.uli.hackathon.schemaobjects.OrderPlaceRequestSo;
 import com.uli.hackathon.schemaobjects.OrderSearchCombinationsRequestSo;
 import com.uli.hackathon.schemaobjects.OrderSearchCombinationsResponseSo;
@@ -9,7 +10,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 
 
 @RequestMapping("/order")
@@ -28,4 +31,6 @@ public interface OrderApi {
     @GetMapping(value = "/cost/{id}")
     Double getCost(@PathVariable Long id);
 
+    @GetMapping(value = "/orders/{consumerId}")
+    List<Order> getOrders(@PathVariable Long consumerId, @RequestParam(required = false) String status);
 }
