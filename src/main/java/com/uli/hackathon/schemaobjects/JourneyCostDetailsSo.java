@@ -7,18 +7,13 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
-import java.util.Map;
-
 
 @Getter
 @Setter
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderSearchCombinationsResponseSo {
-
-    private Map<String, List<JourneyCostDetailsSo>> goodsTypeJourneyListMap;
-    private String orderAvailabilityStatus;
-    private Long sourceStopId;
-    private Long destinationStopId;
+public class JourneyCostDetailsSo {
+    private List<JourneyDetailsSo> journeyDetailsSoList;
+    private Double cost;
 }

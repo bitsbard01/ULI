@@ -16,6 +16,7 @@ import com.uli.hackathon.schemaobjects.AcceptRejectVisitSo;
 import com.uli.hackathon.schemaobjects.GoodsTypeDetails;
 import com.uli.hackathon.schemaobjects.OrderSearchCombinationsRequestSo;
 import com.uli.hackathon.schemaobjects.TripDetailsSo;
+import com.uli.hackathon.schemaobjects.VisitResponseSo;
 import com.uli.hackathon.schemaobjects.VisitSequenceDetails;
 import com.uli.hackathon.service.GoodsTypeService;
 import com.uli.hackathon.service.NotificationService;
@@ -35,6 +36,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.uli.hackathon.utils.Constants.*;
 
@@ -198,14 +200,35 @@ public class VisitServiceImpl implements VisitService {
         return null;
     }
 
-    public List<Visit> getVisitsByOwnerAndStatus(Long ownerId, String status) {
+    public List<VisitResponseSo> getVisitsByOwnerAndStatus(Long ownerId, String status) {
         Owner owner = ownerService.getOwner(ownerId);
         List<Vehicle> vehicles = vehicleService.getVehiclesByOwner(owner);
         if (status != null && !status.isEmpty()) {
-            return visitRepository.findByVehicleInAndStatus(vehicles, status);
+            List<Visit> visits = visitRepository.findByVehicleInAndStatus(vehicles, status);
+            return mapVisitToVisitResponseSo(visits);
         } else {
-            return visitRepository.findByVehicleIn(vehicles);
+            List<Visit> visits = visitRepository.findByVehicleIn(vehicles);
+            return mapVisitToVisitResponseSo(visits);
         }
+    }
+
+    private List<VisitResponseSo> mapVisitToVisitResponseSo(List<Visit> visits){
+        return visits.stream()
+                .map(visit -> VisitResponseSo.builder()
+                        .visitId(visit.getVisitId())
+                        .visitInitiationTime(visit.getVisitStartTime())
+                        .visitTerminationTime(visit.getVisitEndTime())
+                        .availableVolumeCapacity(visit.getAvailableVolumeCapacity())
+                        .availableWeightCapacity(visit.getAvailableWeightCapacity())
+                        .costPerCubicMeter(visit.getCostPerCubicMeter())
+                        .costPerKg(visit.getCostPerKg())
+                        .status(visit.getStatus())
+                        .goodsType(visit.getGoodsType().getGoodsType())
+                        .sourceStop(visit.getRoute().getSourceStop().getStopName())
+                        .destinationStop(visit.getRoute().getDestinationStop().getStopName())
+                        .vehicle(visit.getVehicle().getVehicleNo())
+                        .build())
+                .collect(Collectors.toList());
     }
     private void sendNotification(Order order){
         User user = order.getConsumer().getUser();

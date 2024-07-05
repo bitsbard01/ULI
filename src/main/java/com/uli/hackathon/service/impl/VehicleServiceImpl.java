@@ -6,6 +6,7 @@ import com.uli.hackathon.entity.Stop;
 import com.uli.hackathon.entity.Vehicle;
 import com.uli.hackathon.repository.VehicleRepository;
 import com.uli.hackathon.schemaobjects.LocationSo;
+import com.uli.hackathon.schemaobjects.VehicleAutoCompleteResponseSo;
 import com.uli.hackathon.schemaobjects.VehicleDetailsSo;
 import com.uli.hackathon.service.RouteService;
 import com.uli.hackathon.service.StopService;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.uli.hackathon.utils.Constants.THRESHOLD_DISTANCE;
 
@@ -32,7 +34,7 @@ public class VehicleServiceImpl implements VehicleService {
     private final VehicleRepository vehicleRepository;
 
     @Override
-    public void registerVehicle(VehicleDetailsSo vehicleDetailsSo) {
+    public Vehicle registerVehicle(VehicleDetailsSo vehicleDetailsSo) {
         Owner owner = ownerService.getOwner(vehicleDetailsSo.getOwnerId());
         if(owner == null){
             throw new RuntimeException("Owner not found with id: " + vehicleDetailsSo.getOwnerId());
@@ -50,7 +52,7 @@ public class VehicleServiceImpl implements VehicleService {
                 .validTill(vehicleDetailsSo.getValidityEnd()).owner(owner).mostFrequentRoute(route)
                 .build();
 
-        vehicleRepository.save(vehicle);
+        return vehicleRepository.save(vehicle);
     }
 
     @Override
@@ -77,5 +79,15 @@ public class VehicleServiceImpl implements VehicleService {
 
     public List<Vehicle> getVehiclesByOwner(Owner owner) {
         return vehicleRepository.findByOwner(owner);
+    }
+
+    public List<VehicleAutoCompleteResponseSo> findVehicleByKeyword(String keyword) {
+        List<Vehicle> vehicles = vehicleRepository.findByVehicleNoContainingIgnoreCase(keyword);
+        return vehicles.stream()
+                .map(vehicle -> VehicleAutoCompleteResponseSo.builder()
+                        .vehicleId(vehicle.getVehicleId())
+                        .vehicleNo(vehicle.getVehicleNo())
+                        .build())
+                .collect(Collectors.toList());
     }
 }

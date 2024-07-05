@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -29,5 +31,9 @@ public class StopServiceImpl implements StopService {
     @Override
     public Stop getStop(Long stopId) {
         return stopRepository.findById(stopId).orElse(null);
+    }
+
+    public List<Stop> getStopsByName(String stopName) {
+        return stopRepository.findByStopNameContainingIgnoreCase(stopName);
     }
 }

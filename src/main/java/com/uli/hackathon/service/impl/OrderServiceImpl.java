@@ -14,8 +14,11 @@ import com.uli.hackathon.entity.Visit;
 import com.uli.hackathon.helper.CommonHelper;
 import com.uli.hackathon.repository.OrderRepository;
 import com.uli.hackathon.schemaobjects.GoodsTypeDetails;
+import com.uli.hackathon.schemaobjects.JourneyCostDetailsSo;
 import com.uli.hackathon.schemaobjects.JourneyDetailsSo;
+import com.uli.hackathon.schemaobjects.OrderDetailsSo;
 import com.uli.hackathon.schemaobjects.OrderPlaceRequestSo;
+import com.uli.hackathon.schemaobjects.OrderResponseSo;
 import com.uli.hackathon.schemaobjects.OrderSearchCombinationsRequestSo;
 import com.uli.hackathon.schemaobjects.OrderSearchCombinationsResponseSo;
 import com.uli.hackathon.schemaobjects.ReachDetails;
@@ -35,8 +38,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -126,7 +132,7 @@ public class OrderServiceImpl implements OrderService {
         VisitSequenceDetails visitSequenceDetails = visitService.getAllVisitIdSequences(orderSearchCombinationsRequestSo);
         Map<String, List<List<Long>>> goodsTypeVisitIdSequencesMap = visitSequenceDetails.getVisitIdSequences();
 
-        Map<String, List<List<JourneyDetailsSo>>> goodsTypeJourneyListMap = new HashMap<>();
+        Map<String, List<JourneyCostDetailsSo>> goodsTypeJourneyListMap = new HashMap<>();
 
         for (Map.Entry<String, List<List<Long>>> entry : goodsTypeVisitIdSequencesMap.entrySet()) {
             String goodsType = entry.getKey();
@@ -142,12 +148,14 @@ public class OrderServiceImpl implements OrderService {
 
             GoodsTypeDetails goodsTypeDetails = goodsTypeDetailsMap.get(goodsType);
             GoodsType goodsType1 = goodsTypeService.getGoodsType(goodsType);
-            List<List<JourneyDetailsSo>> journeyDetailsListSequences = new ArrayList<>();
+            List<JourneyCostDetailsSo> journeyDetailsListSequences = new ArrayList<>();
             for (List<Long> visitIdSequence : visitIdSequences) {
                 List<JourneyDetailsSo> journeyDetailsList = new ArrayList<>();
+                BigDecimal totalCost = BigDecimal.ZERO;
+
                 for (Long visitId : visitIdSequence) {
                     Visit visit = visitService.getVisit(visitId);
-                    double cost = calculateCost(visit, goodsTypeDetails,goodsType1);
+                    double cost = calculateCost(visit, goodsTypeDetails, goodsType1);
 
                     JourneyDetailsSo journeyDetails = JourneyDetailsSo.builder()
                             .visitId(visit.getVisitId())
@@ -163,10 +171,16 @@ public class OrderServiceImpl implements OrderService {
                             .destinationLongitude(visit.getRoute().getDestinationStop().getLocationLongitude())
                             .destinationName(visit.getRoute().getDestinationStop().getStopName())
                             .build();
-
+                    totalCost = totalCost.add(BigDecimal.valueOf(cost));
                     journeyDetailsList.add(journeyDetails);
                 }
-                journeyDetailsListSequences.add(journeyDetailsList);
+
+                JourneyCostDetailsSo journeyCostDetailsSo = JourneyCostDetailsSo.builder()
+                        .journeyDetailsSoList(journeyDetailsList)
+                        .cost(totalCost.doubleValue())
+                        .build();
+
+                journeyDetailsListSequences.add(journeyCostDetailsSo);
             }
             goodsTypeJourneyListMap.put(goodsType, journeyDetailsListSequences);
             if (orderAvailabilityStatus.equals(NOT_AVAILABLE)){
@@ -204,23 +218,53 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Double getCost(Long orderId) {
+    public OrderPlaceRequestSo getOrderDetails(Long orderId) {
         Order order = orderRepository.findById(orderId).orElse(null);
         Goods goods = goodsService.getGoods(order);
         List<Visit> visits = shipmentService.getVisits(goods);
         GoodsTypeDetails goodsTypeDetails = GoodsTypeDetails.builder().weightCapacity(goods.getTotalWeight())
                 .volumeCapacity(goods.getTotalVolume()).build();
         GoodsType goodsType = goods.getGoodsType();
-        return visits.stream()
+        List<Long> visitIds = visits.stream()
+                .map(Visit::getVisitId)
+                .collect(Collectors.toList());
+        Double cost = visits.stream()
                 .mapToDouble(visit -> calculateCost(visit, goodsTypeDetails, goodsType))
                 .sum();
+        OrderDetailsSo orderDetailsSo = OrderDetailsSo.builder().visits(visitIds).goodsType(goodsType.getGoodsType())
+                .volumeCapacity(goods.getTotalVolume()).weightCapacity(goods.getTotalWeight()).build();
+        OrderPlaceRequestSo orderPlaceRequestSo = OrderPlaceRequestSo.builder().orderId(orderId)
+                .consumerId(order.getConsumer().getConsumerId()).orderDetailsSoList(Collections.singletonList(orderDetailsSo))
+                .cost(cost).sourceStopId(order.getSourceStop().getStopId())
+                .destinationStopId(order.getDestinationStop().getStopId()).build();
+        return orderPlaceRequestSo;
     }
 
-    public List<Order> getOrdersByConsumerAndStatus(Long consumerId, String status) {
+    public List<OrderResponseSo> getOrdersByConsumerAndStatus(Long consumerId, String status) {
         if (status != null && !status.isEmpty()) {
-            return orderRepository.findByConsumerConsumerIdAndStatus(consumerId, status);
+            List<Order> orders = orderRepository.findByConsumerConsumerIdAndStatus(consumerId, status);
+            return orders.stream()
+                    .map(order -> OrderResponseSo.builder()
+                            .orderId(order.getOrderId())
+                            .bookingTime(order.getBookingTime())
+                            .status(order.getStatus())
+                            .cost(order.getCost())
+                            .sourceStop(order.getSourceStop().getStopName())
+                            .destinationStop(order.getDestinationStop().getStopName())
+                            .build())
+                    .collect(Collectors.toList());
         } else {
-            return orderRepository.findByConsumerConsumerId(consumerId);
+            List<Order> orders =orderRepository.findByConsumerConsumerId(consumerId);
+            return orders.stream()
+                    .map(order -> OrderResponseSo.builder()
+                            .orderId(order.getOrderId())
+                            .bookingTime(order.getBookingTime())
+                            .status(order.getStatus())
+                            .cost(order.getCost())
+                            .sourceStop(order.getSourceStop().getStopName())
+                            .destinationStop(order.getDestinationStop().getStopName())
+                            .build())
+                    .collect(Collectors.toList());
         }
     }
     private double calculateCost(Visit visit, GoodsTypeDetails goodsTypeDetails, GoodsType goodsType) {
@@ -228,7 +272,8 @@ public class OrderServiceImpl implements OrderService {
         double weightCost = visit.getCostPerKg() * goodsTypeDetails.getWeightCapacity();
         double onLoadingCharge = goodsType.getOnLoadingChargePerKg() * goodsTypeDetails.getWeightCapacity();
         double offLoadingCharge = goodsType.getOffLoadingChargePerKg() * goodsTypeDetails.getWeightCapacity();
-        return Math.max(volumeCost, weightCost) + onLoadingCharge + offLoadingCharge;
+        double val = Math.max(volumeCost, weightCost) + onLoadingCharge + offLoadingCharge;
+        return val;
     }
 
     private void notifyVehicles(RequestOrderSo request, GoodsTypeDetails goodsTypeDetails,Goods goods){
@@ -338,6 +383,7 @@ public class OrderServiceImpl implements OrderService {
         String visitDetails = "Visit Requested :" + " visit required between " + visit.getVisitStartTime().toString() + " - "
                 + visit.getVisitEndTime().toString() + " from " + visit.getRoute().getSourceStop().getStopName() + " to " +
                 visit.getRoute().getDestinationStop().getStopName() + " for goods type " + visit.getGoodsType().getGoodsType()
+                + " and vehicle " + vehicle.getVehicleNo()
                 + " with minimum volume capacity required " + visit.getAvailableVolumeCapacity() +
                 " and minimum weight capacity required " + visit.getAvailableWeightCapacity();
         Notification notification = Notification.builder().user(user).type(VISIT_REQUEST).details(visitDetails)

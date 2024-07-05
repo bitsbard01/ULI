@@ -1,5 +1,6 @@
 package com.uli.hackathon.controller;
 
+import com.uli.hackathon.entity.Owner;
 import com.uli.hackathon.entity.Visit;
 import com.uli.hackathon.service.OwnerService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,12 @@ public class OwnerApiController implements OwnerApi{
     private final OwnerService ownerService;
 
     @Override
-    public void registerOwner(Long userId) {
-        ownerService.registerOwner(userId);
+    public Owner registerOwner(Long userId) {
+        return ownerService.registerOwner(userId);
+    }
+
+    @Override
+    public Owner getOwnerId(Long userId) {
+        return ownerService.getOwnerId(userId);
     }
 }

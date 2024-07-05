@@ -1,7 +1,7 @@
 package com.uli.hackathon.controller;
 
-import com.uli.hackathon.entity.Order;
 import com.uli.hackathon.schemaobjects.OrderPlaceRequestSo;
+import com.uli.hackathon.schemaobjects.OrderResponseSo;
 import com.uli.hackathon.schemaobjects.OrderSearchCombinationsRequestSo;
 import com.uli.hackathon.schemaobjects.OrderSearchCombinationsResponseSo;
 import com.uli.hackathon.schemaobjects.RequestOrderSo;
@@ -28,9 +28,9 @@ public interface OrderApi {
     @PostMapping(value = "/request")
     void requestOrder(@RequestBody RequestOrderSo requestOrderSo);
 
-    @GetMapping(value = "/cost/{id}")
-    Double getCost(@PathVariable Long id);
+    @GetMapping(value = "/order-details/{id}")
+    OrderPlaceRequestSo getOrderDetails(@PathVariable Long id);
 
     @GetMapping(value = "/orders/{consumerId}")
-    List<Order> getOrders(@PathVariable Long consumerId, @RequestParam(required = false) String status);
+    List<OrderResponseSo> getOrders(@PathVariable Long consumerId, @RequestParam(required = false) String status);
 }

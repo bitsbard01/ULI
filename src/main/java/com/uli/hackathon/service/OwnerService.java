@@ -7,7 +7,9 @@ import java.util.List;
 
 public interface OwnerService {
 
-    void registerOwner(Long userId);
+    Owner registerOwner(Long userId);
 
     Owner getOwner(Long ownerId);
+
+    Owner getOwnerId(Long userId);
 }

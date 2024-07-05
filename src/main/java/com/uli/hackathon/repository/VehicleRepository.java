@@ -34,4 +34,6 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
                                       Pageable pageable);
 
     List<Vehicle> findByOwner(Owner owner);
+
+    List<Vehicle> findByVehicleNoContainingIgnoreCase(String vehicleNo);
 }

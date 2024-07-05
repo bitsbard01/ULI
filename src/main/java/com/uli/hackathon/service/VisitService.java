@@ -5,6 +5,7 @@ import com.uli.hackathon.entity.Visit;
 import com.uli.hackathon.schemaobjects.AcceptRejectVisitSo;
 import com.uli.hackathon.schemaobjects.OrderSearchCombinationsRequestSo;
 import com.uli.hackathon.schemaobjects.TripDetailsSo;
+import com.uli.hackathon.schemaobjects.VisitResponseSo;
 import com.uli.hackathon.schemaobjects.VisitSequenceDetails;
 
 import java.time.LocalDateTime;
@@ -26,5 +27,5 @@ public interface VisitService {
 
     String acceptRejectVisit(AcceptRejectVisitSo acceptRejectVisitSo);
 
-    List<Visit> getVisitsByOwnerAndStatus(Long ownerId, String status);
+    List<VisitResponseSo> getVisitsByOwnerAndStatus(Long ownerId, String status);
 }

@@ -1,7 +1,7 @@
 package com.uli.hackathon.controller;
 
-import com.uli.hackathon.entity.Order;
 import com.uli.hackathon.schemaobjects.OrderPlaceRequestSo;
+import com.uli.hackathon.schemaobjects.OrderResponseSo;
 import com.uli.hackathon.schemaobjects.OrderSearchCombinationsRequestSo;
 import com.uli.hackathon.schemaobjects.OrderSearchCombinationsResponseSo;
 import com.uli.hackathon.schemaobjects.RequestOrderSo;
@@ -37,12 +37,12 @@ public class OrderApiController implements OrderApi{
     }
 
     @Override
-    public Double getCost(Long id) {
-        return orderService.getCost(id);
+    public OrderPlaceRequestSo getOrderDetails(Long id) {
+        return orderService.getOrderDetails(id);
     }
 
     @Override
-    public List<Order> getOrders(Long consumerId, String status) {
+    public List<OrderResponseSo> getOrders(Long consumerId, String status) {
         return orderService.getOrdersByConsumerAndStatus(consumerId,status);
     }
 }

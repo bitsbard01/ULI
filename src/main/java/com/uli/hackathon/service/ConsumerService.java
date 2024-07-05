@@ -7,7 +7,9 @@ import java.util.List;
 
 public interface ConsumerService {
 
-    void registerConsumer(Long userId);
+    Consumer registerConsumer(Long userId);
 
     Consumer getConsumer(Long consumerId);
+
+    Consumer getConsumerId(Long userId);
 }

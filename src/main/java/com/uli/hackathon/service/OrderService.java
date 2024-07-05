@@ -1,8 +1,7 @@
 package com.uli.hackathon.service;
 
-import com.uli.hackathon.entity.Consumer;
-import com.uli.hackathon.entity.Order;
 import com.uli.hackathon.schemaobjects.OrderPlaceRequestSo;
+import com.uli.hackathon.schemaobjects.OrderResponseSo;
 import com.uli.hackathon.schemaobjects.OrderSearchCombinationsRequestSo;
 import com.uli.hackathon.schemaobjects.OrderSearchCombinationsResponseSo;
 import com.uli.hackathon.schemaobjects.RequestOrderSo;
@@ -18,7 +17,7 @@ public interface OrderService {
 
     void requestOrder(RequestOrderSo requestOrderSo);
 
-    Double getCost(Long orderId);
+    OrderPlaceRequestSo getOrderDetails(Long orderId);
 
-    List<Order> getOrdersByConsumerAndStatus(Long consumerId, String status);
+    List<OrderResponseSo> getOrdersByConsumerAndStatus(Long consumerId, String status);
 }

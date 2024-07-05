@@ -3,6 +3,7 @@ package com.uli.hackathon.controller;
 import com.uli.hackathon.entity.Visit;
 import com.uli.hackathon.schemaobjects.AcceptRejectVisitSo;
 import com.uli.hackathon.schemaobjects.TripDetailsSo;
+import com.uli.hackathon.schemaobjects.VisitResponseSo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +24,6 @@ public interface VisitApi {
     ResponseEntity<String> acceptVisit(@RequestBody AcceptRejectVisitSo acceptRejectVisitSo);
 
     @GetMapping(value = "/visits/{ownerId}")
-    List<Visit> getVisits(@PathVariable Long ownerId, @RequestParam(required = false) String status);
+    List<VisitResponseSo> getVisits(@PathVariable Long ownerId, @RequestParam(required = false) String status);
 
 }

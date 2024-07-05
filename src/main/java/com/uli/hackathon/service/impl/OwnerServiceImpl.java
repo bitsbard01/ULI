@@ -1,5 +1,6 @@
 package com.uli.hackathon.service.impl;
 
+import com.uli.hackathon.entity.Consumer;
 import com.uli.hackathon.entity.Order;
 import com.uli.hackathon.entity.Owner;
 import com.uli.hackathon.entity.User;
@@ -26,14 +27,26 @@ public class OwnerServiceImpl implements OwnerService {
 
     private final UserService userService;
     @Override
-    public void registerOwner(Long userId) {
+    public Owner registerOwner(Long userId) {
         User user = userService.getUser(userId);
-        Owner owner = Owner.builder().user(user).build();
-        ownerRepository.save(owner);
+        if(user != null) {
+            Owner owner1 = ownerRepository.findByUser_UserId(user.getUserId());
+            if (owner1 != null) {
+                return null;
+            }
+            Owner owner = Owner.builder().user(user).build();
+            return ownerRepository.save(owner);
+        }
+        return null;
     }
 
     @Override
     public Owner getOwner(Long ownerId) {
         return ownerRepository.findById(ownerId).orElse(null);
+    }
+
+    @Override
+    public Owner getOwnerId(Long userId) {
+       return ownerRepository.findByUser_UserId(userId);
     }
 }
